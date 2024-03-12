@@ -1,0 +1,17 @@
+name: PlayerMention
+version: 1.0
+main: com.galaxycraft.playermention.PlayerMention
+author: iLeean
+description: Plugin que reproduce un sonido cuando un jugador es mencionado en el chat.
+api-version: 1.17
+commands:
+    pm:
+      description: Comando principal del plugin.
+      aliases:
+        - playermention
+        - pm
+      permission: pm.use
+    reload:
+      description: Recarga la configuración del plugin.
+      usage: /pm reload
+      permission: pm.reload
