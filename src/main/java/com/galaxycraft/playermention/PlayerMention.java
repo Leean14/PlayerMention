@@ -19,11 +19,13 @@ import java.util.UUID;
 public class PlayerMention extends JavaPlugin implements Listener {
 
     private ChatColor mentionColor;
+    private Map<UUID, Boolean> mentionStates = new HashMap<>();
     private Map<UUID, Long> mentionCooldowns = new HashMap<>();
     private int mentionCooldownSeconds;
     public static String prefixPlugin = "&8[&5Player&dMention&8] ";
     private String version = getDescription().getVersion();
     private String prefix;
+
     @Override
     public void onEnable() {
         // Registra los eventos y configura el plugin
@@ -40,12 +42,27 @@ public class PlayerMention extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         // Comando principal del plugin (/pm)
-        if (label.equalsIgnoreCase("pm")) {
+        if (label.equalsIgnoreCase("pm") || label.equalsIgnoreCase("playermention")) {
             if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("pm.reload")) {
                     reloadConfig(); // Recarga la configuración
                     loadConfigValues(); // Carga los valores de configuración
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+"&aConfiguración recargada correctamente."));
+                    return true;
+                } else {
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+noPermissionMessage));
+                    return false;
+                }
+            } else if (args.length > 0 && args[0].equalsIgnoreCase("on")) {
+                if (sender.hasPermission("pm.use")) {
+                    mentionStates.put(((Player) sender).getUniqueId(), true); // Activa las menciones del jugador
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&aTus menciones han sido activadas."));
+                    return true;
+                }
+            } else if (args.length > 0 && args[0].equalsIgnoreCase("off")) {
+                if (sender.hasPermission("pm.use")) {
+                    mentionStates.put(((Player) sender).getUniqueId(), false); // Desactiva las menciones del jugador
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&aTus menciones han sido desactivadas."));
                     return true;
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+noPermissionMessage));
@@ -67,6 +84,12 @@ public class PlayerMention extends JavaPlugin implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
         UUID senderUUID = sender.getUniqueId();
+        boolean mentionsEnabled = mentionStates.getOrDefault(senderUUID, true); // Por defecto, las menciones están habilitadas
+
+        if (!mentionsEnabled) {
+            return; // Si las menciones están desactivadas para el jugador, no hacemos nada
+        }
+
         // Verifica si el jugador ha mencionado recientemente
         if (mentionCooldowns.containsKey(senderUUID)) {
             long lastMentionTime = mentionCooldowns.get(senderUUID);
