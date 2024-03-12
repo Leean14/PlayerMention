@@ -1,11 +1,11 @@
-# Configuración del plugin
+# Plugin Configuration
 
-prefix: "&8[&5Player&dMention&8] " # Prefix para los mensajes.
-mention_color: RED # Ejemplos de colores: RED, BLUE, GREEN, YELLOW, etc...
-mention_sound: ENTITY_PLAYER_LEVELUP # Lista de sonidos: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-mention_cooldown_seconds: 10 # Cooldown para menciones (en segundos).
+prefix: "&8[&5Player&dMention&8] " # Prefix for messages.
+mention_color: RED # Examples of colors: RED, BLUE, GREEN, YELLOW, etc...
+mention_sound: ENTITY_PLAYER_LEVELUP # List of sounds: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+mention_cooldown_seconds: 10 # Cooldown for mentions (in seconds).
 
-# Mensajes:
+# Messages:
 
-mention_cooldown_message: "&cDebes esperar %time% segundos entre cada mención." # %time% será reemplazado por el valor que pongas en "mention_cooldown_seconds"
-no_permission_message: "&cNo tienes permiso para ejecutar este comando."
+mention_cooldown_message: "&cYou must wait %time% seconds between each mention." # %time% will be replaced by the value you put in "mention_cooldown_seconds"
+no_permission_message: "&cYou do not have permission to execute this command."

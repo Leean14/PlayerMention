@@ -28,26 +28,26 @@ public class PlayerMention extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        // Registra los eventos y configura el plugin
+        // Registers the events and configures the plugin.
         Bukkit.getPluginManager().registerEvents(this, this);
-        saveDefaultConfig(); // Guarda el archivo de configuración predeterminado si no existe
-        loadConfigValues(); // Carga los valores de configuración
-        // Imprime mensajes en la consola al iniciar el plugin
+        saveDefaultConfig(); // Saves the default configuration file if it does not exist.
+        loadConfigValues(); // Loads the configuration values.
+        // Prints messages to the console after plugin initialization.
         Bukkit.getConsoleSender().sendMessage(
-                ChatColor.translateAlternateColorCodes('&', prefixPlugin+"&aha sido habilitado correctamente. v"+version));
+                ChatColor.translateAlternateColorCodes('&', prefixPlugin+"&ahas been enabled successfully."+version));
         Bukkit.getConsoleSender().sendMessage(
-                ChatColor.translateAlternateColorCodes('&', prefixPlugin+"&aGracias por usar mi plugin."));
+                ChatColor.translateAlternateColorCodes('&', prefixPlugin+"&ahas been disabled - Thank you for using my plugin."));
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        // Comando principal del plugin (/pm)
+        // Main command of the plugin (/pm)
         if (label.equalsIgnoreCase("pm") || label.equalsIgnoreCase("playermention")) {
             if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("pm.reload")) {
-                    reloadConfig(); // Recarga la configuración
-                    loadConfigValues(); // Carga los valores de configuración
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+"&aConfiguración recargada correctamente."));
+                    reloadConfig(); // Reloads the configuration
+                    loadConfigValues(); // Loads the configuration values
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+"&aConfiguration reloaded successfully."));
                     return true;
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+noPermissionMessage));
@@ -56,13 +56,13 @@ public class PlayerMention extends JavaPlugin implements Listener {
             } else if (args.length > 0 && args[0].equalsIgnoreCase("on")) {
                 if (sender.hasPermission("pm.use")) {
                     mentionStates.put(((Player) sender).getUniqueId(), true); // Activa las menciones del jugador
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&aTus menciones han sido activadas."));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&aYour mentions have been activated."));
                     return true;
                 }
             } else if (args.length > 0 && args[0].equalsIgnoreCase("off")) {
                 if (sender.hasPermission("pm.use")) {
                     mentionStates.put(((Player) sender).getUniqueId(), false); // Desactiva las menciones del jugador
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&aTus menciones han sido desactivadas."));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&aYour mentions have been deactivated."));
                     return true;
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+noPermissionMessage));
@@ -70,7 +70,7 @@ public class PlayerMention extends JavaPlugin implements Listener {
                 }
             } else {
                 if (sender.hasPermission("pm.use")) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+"&7Estás usando la versión "+version));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+"&7You are using version "+version));
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix+noPermissionMessage));
                 }
@@ -84,19 +84,19 @@ public class PlayerMention extends JavaPlugin implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player sender = event.getPlayer();
         UUID senderUUID = sender.getUniqueId();
-        boolean mentionsEnabled = mentionStates.getOrDefault(senderUUID, true); // Por defecto, las menciones están habilitadas
+        boolean mentionsEnabled = mentionStates.getOrDefault(senderUUID, true); // By default, mentions are enabled.
 
         if (!mentionsEnabled) {
-            return; // Si las menciones están desactivadas para el jugador, no hacemos nada
+            return; // If mentions are disabled for the player, nothing happens
         }
 
-        // Verifica si el jugador ha mencionado recientemente
+        // Check if the player has recently mentioned.
         if (mentionCooldowns.containsKey(senderUUID)) {
             long lastMentionTime = mentionCooldowns.get(senderUUID);
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - lastMentionTime;
             if (elapsedTime < mentionCooldownSeconds * 1000) {
-                // Si el tiempo transcurrido es menor que el tiempo de espera, cancela la mención
+                // If the elapsed time is less than the cooldown time, cancel the mention.
                 event.setCancelled(true);
                 String message = mentionCooldownMessage.replace("%time%", String.valueOf(mentionCooldownSeconds));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
@@ -109,14 +109,14 @@ public class PlayerMention extends JavaPlugin implements Listener {
         for (Player player : Bukkit.getOnlinePlayers()) {
             String playerName = player.getName();
             if (message.contains("@" + playerName)) {
-                // Reproduce el sonido al jugador mencionado
+                // Play the sound for the mentioned player.
                 player.playSound(player.getLocation(), getMentionSound(), 1.0f, 1.0f);
 
-                // Cambia el color del nombre del jugador mencionado
+                // Change the color of the mentioned player's name.
                 String newMessage = message.replace("@" + playerName, mentionColor + "@" + playerName + ChatColor.RESET);
                 event.setMessage(newMessage);
 
-                // Actualiza el tiempo de la última mención para el jugador
+                // Update the timestamp of the last mention for the player.
                 mentionCooldowns.put(senderUUID, System.currentTimeMillis());
 
             }
@@ -130,22 +130,22 @@ public class PlayerMention extends JavaPlugin implements Listener {
         FileConfiguration config = getConfig();
         String colorName = config.getString("mention_color", "RED");
         mentionColor = ChatColor.valueOf(colorName.toUpperCase());
-        // Carga el tiempo de espera de la configuración
+        // Get the cooldown time from the configuration.
         mentionCooldownSeconds = config.getInt("mention_cooldown_seconds", 10);
-        // Carga los mensajes de la configuración
-        mentionCooldownMessage = config.getString("mention_cooldown_message", "&cDebes esperar %time% segundos entre cada mención.");
-        // Carga el mensaje de permiso denegado de la configuración
-        noPermissionMessage = config.getString("no_permission_message", "&cNo tienes permiso para ejecutar este comando.");
-        // Carga el prefix para los mensajes
+        // Load the messages from the configuration.
+        mentionCooldownMessage = config.getString("mention_cooldown_message", "&cYou must wait %time% seconds between each mention.");
+        // Load the denied permission message from the configuration.
+        noPermissionMessage = config.getString("no_permission_message", "&cYou do not have permission to execute this command.");
+        // Load the prefix for the messages.
         prefix = config.getString("prefix", "&8[&5Player&dMention&8] ");
 
     }
     private Sound getMentionSound() {
-        // Obtiene el sonido de la configuración
+        // Retrieve the sound from the configuration.
         String soundName = getConfig().getString("mention_sound", "ENTITY_PLAYER_LEVELUP");
         Sound sound = Sound.valueOf(soundName);
         if (sound == null) {
-            getLogger().warning(prefix+"No se encontró el sonido especificado en la configuración. Usando el sonido predeterminado.");
+            getLogger().warning(prefix+"The specified sound was not found in the configuration. Using the default sound.");
             sound = Sound.ENTITY_PLAYER_LEVELUP;
         }
         return sound;
