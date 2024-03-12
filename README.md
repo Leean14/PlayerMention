@@ -21,3 +21,7 @@ Options and messages are configurable:
 
     mention_cooldown_message: "&cYou must wait %time% seconds between each mention." # %time% will be replaced by the value you put in "mention_cooldown_seconds" 
     no_permission_message: "&cYou do not have permission to execute this command."
+
+
+More info: https://www.spigotmc.org/resources/playermention.115597/
+This is my first plugin, recommendations and suggestions are welcome :) my discord: leean14#5313
