@@ -1,0 +1,11 @@
+# Konfiguration des Plugins
+
+prefix: "&8[&5Player&dMention&8] " # Präfix für Nachrichten.
+mention_color: RED # Beispiele für Farben: RED, BLUE, GREEN, YELLOW, etc...
+mention_sound: ENTITY_PLAYER_LEVELUP # Liste der Sounds: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+mention_cooldown_seconds: 10 # Cooldown für Erwaehnungen (in Sekunden).
+
+# Nachrichten:
+
+mention_cooldown_message: "&cDu musst %time% Sekunden zwischen jeder Erwaehnung warten." # %time% wird durch den Wert ersetzt, den du bei "mention_cooldown_seconds" eingibst.
+no_permission_message: "&cDu hast keine Berechtigung, diesen Befehl auszuführen."
